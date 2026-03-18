@@ -44,7 +44,7 @@
         .capacity-cell { padding: 8px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #eee; }
         @media (min-width: 600px) { .capacity-cell { border-bottom: none; border-right: 1px solid #999; } }
         .date-cell { display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; }
-        .date-cell input { border: 1px solid #ccc; font-size: 13px; padding: 4px; border-radius: 4px; flex-grow: 1; }
+        .date-cell input { border: 1px solid #ccc; font-size: 13px; padding: 4px; border-radius: 4px; flex-grow: 1; font-family: inherit; }
 
         /* TABLE - Horizontal Scroll for Mobile */
         .table-wrap { overflow-x: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
@@ -86,12 +86,51 @@
         .btn-csv { background: #1e8449; color: white; border-color: #1e8449; }
         .btn-print { background: white; color: #1a5276; }
 
+        /* --- THE MAGIC PRINT FIXES --- */
         @media print { 
-            .footer, .settings-bar, .date-cell input, .btn-group { display: none; } 
-            body { padding: 0; background: white; } 
-            .page { box-shadow: none; border: none; width: 100%; }
+            /* Force Landscape and tight margins */
+            @page { size: A4 landscape; margin: 8mm; }
+
+            /* Force colors to print and remove outer spacing */
+            body { 
+                padding: 0; 
+                margin: 0;
+                background: white; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            } 
+            
+            /* Remove shadows/borders and lock dimensions to prevent page breaks */
+            .page { 
+                box-shadow: none; 
+                border: none; 
+                width: 100%; 
+                max-width: none; 
+                page-break-inside: avoid;
+            }
+            
+            /* Hide interactive elements */
+            .settings-bar, .footer { display: none !important; } 
+            
+            /* Compress vertical padding to guarantee 1-page fit */
+            .address-banner { padding: 5px; }
+            .logo-cell { padding: 8px; }
+            .title-cell { padding: 8px; }
+            .subheader { padding: 5px 0; }
+            .sig-section { padding: 15px 20px 5px 20px; margin-top: 5px; }
+            .version-bar { padding: 5px 14px; margin-top: 10px; border-top: none; }
+            
+            /* Shrink table row height slightly to fit vertically */
+            tbody tr td { height: 26px !important; font-size: 11px; }
+            thead tr th { padding: 3px 1px !important; font-size: 9px !important; }
+            
+            /* Ensure the table doesn't get cut off horizontally */
             .table-wrap { overflow: visible; }
-            table { width: 100%; }
+            table { width: 100%; table-layout: fixed; }
+            
+            /* Make inputs look like standard text */
+            .date-cell input, .sig-input { border: none; padding: 0; outline: none; background: transparent; }
+            tbody tr td input { font-size: 11px !important; }
         }
     </style>
 </head>
