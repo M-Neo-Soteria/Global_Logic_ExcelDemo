@@ -7,71 +7,141 @@
     <title>Daily UPS Health Check – GL02-FM-ES (M&E)-007</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 12px; background: #e8e8e8; display: flex; justify-content: center; padding: 24px 16px; }
-        .page { background: #fff; width: 1150px; border: 1px solid #aaa; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); display: flex; flex-direction: column; }
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 12px; background: #e8e8e8; display: flex; justify-content: center; padding: 10px; }
+        
+        .page { 
+            background: #fff; 
+            width: 100%; 
+            max-width: 1150px; 
+            border: 1px solid #aaa; 
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; /* Prevent page-level scroll */
+        }
 
         /* HEADER */
-        .header { display: grid; grid-template-columns: 220px 1fr 220px; border-bottom: 2px solid #555; }
-        .logo-cell { padding: 8px 12px; border-right: 1px solid #999; display: flex; flex-direction: column; justify-content: center; }
-        .logo-cell .brand { font-size: 22px; font-weight: 300; color: #1a1a1a; line-height: 1; }
-        .logo-cell .brand strong { font-weight: 700; }
-        .logo-cell .sub { font-size: 8.5px; color: #555; margin-top: 2px; }
-        .title-cell { background: #7f7f7f; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 700; padding: 10px; }
-        .doc-cell { border-left: 1px solid #999; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; padding: 8px 12px; text-align: center; }
+        .header { 
+            display: grid; 
+            grid-template-columns: 220px 1fr 220px; 
+            border-bottom: 2px solid #555; 
+        }
 
         /* ADDRESS BANNER */
-        .address-banner { background: #fff; padding: 10px; border-bottom: 1px solid #bbb; text-align: center; line-height: 1.4; }
-        .address-banner strong { font-size: 13px; color: #333; }
-        .address-banner p { font-size: 11px; color: #555; }
+        .address-banner { background: #fff; padding: 8px; border-bottom: 1px solid #bbb; text-align: center; }
+        .address-banner strong { font-size: 12px; display: block; margin-bottom: 2px; }
+        .address-banner p { font-size: 10px; color: #555; }
 
-        /* SETTINGS BAR */
-        .settings-bar { background: #f0f0f0; border-bottom: 1px solid #999; display: flex; padding: 8px 15px; gap: 20px; align-items: center; font-weight: 600; font-size: 11px; }
-        .settings-group { display: flex; align-items: center; gap: 8px; border-right: 1px solid #ccc; padding-right: 15px; }
-        .settings-group:last-child { border: none; }
-        .settings-bar input { width: 45px; padding: 2px; border: 1px solid #999; text-align: center; border-radius: 3px; }
+        /* SETTINGS BAR - Wrap for mobile */
+        .settings-bar { 
+            background: #f0f0f0; 
+            border-bottom: 1px solid #999; 
+            display: flex; 
+            flex-wrap: wrap; 
+            padding: 8px; 
+            gap: 10px; 
+            font-weight: 600; 
+            font-size: 11px; 
+        }
+        .settings-group { display: flex; align-items: center; gap: 5px; border-right: 1px solid #ccc; padding-right: 10px; }
+        .settings-bar input { width: 40px; padding: 3px; border: 1px solid #999; text-align: center; }
 
         /* SUB-HEADER */
-        .subheader { display: grid; grid-template-columns: 1fr 220px; border-bottom: 1px solid #999; }
-        .capacity-cell { padding: 6px 10px; font-size: 13px; font-weight: 600; border-right: 1px solid #999; }
-        .date-cell { display: flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 13px; font-weight: 600; }
-        .date-cell input { border: 1px solid #ccc; font-size: 12px; padding: 1px 4px; }
+        .subheader { display: flex; justify-content: space-between; border-bottom: 1px solid #999; background: #fafafa; }
+        .capacity-cell { padding: 8px; font-size: 12px; font-weight: 700; }
+        .date-cell { padding: 8px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
 
-        /* TABLE */
-        .table-wrap { overflow-x: auto; flex-grow: 1; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        thead tr th { background: #d9d9d9; border: 1px solid #999; text-align: center; font-weight: 700; font-size: 10px; padding: 3px 2px; }
-        tbody tr td { border: 1px solid #bbb; height: 26px; text-align: center; }
-        tbody tr td.time-label { font-weight: 600; background: #f2f2f2; }
-        tbody tr td input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-size: 11px; background: transparent; }
-        tbody tr td input:focus { background: #fff8d6; box-shadow: inset 0 0 0 1.5px #e6b800; }
+        /* TABLE SCROLL LOGIC */
+        .table-wrap { 
+            overflow-x: auto; 
+            overflow-y: auto; 
+            max-height: 60vh; /* Limits table height on small screens */
+            position: relative;
+        }
+        table { border-collapse: collapse; min-width: 1000px; table-layout: fixed; }
         
+        thead th { 
+            background: #d9d9d9; 
+            border: 1px solid #999; 
+            text-align: center; 
+            font-size: 10px; 
+            padding: 5px 2px; 
+            position: sticky;
+            top: 0; /* Sticky headers */
+            z-index: 10;
+        }
+
+        /* Sticky First Column (Time) */
+        .time-label { 
+            position: sticky; 
+            left: 0; 
+            background: #f2f2f2 !important; 
+            z-index: 5; 
+            border-right: 2px solid #999 !important; 
+            font-weight: 700;
+        }
+
+        tbody td { border: 1px solid #bbb; height: 35px; text-align: center; background: #fff; }
+        tbody td input { width: 100%; height: 100%; border: none; outline: none; text-align: center; font-size: 13px; }
+
         /* ALERT COLORS */
-        .val-high { color: #d93025 !important; font-weight: 700; }
-        .val-low { color: #008b8b !important; font-weight: 700; }
+        .val-high { color: #d93025 !important; font-weight: 700; background: #fff0f0; }
+        .val-low { color: #008b8b !important; font-weight: 700; background: #f0ffff; }
 
-        /* SIGNATURE SECTION */
-        .sig-section { display: flex; justify-content: space-between; padding: 30px 40px 10px 40px; margin-top: 10px; }
-        .sig-box { font-size: 12px; font-weight: 600; color: #333; display: flex; align-items: flex-end; }
-        .sig-input { border: none; border-bottom: 1px solid #000; width: 220px; margin-left: 8px; font-family: inherit; font-size: 13px; outline: none; padding-bottom: 2px; text-align: center; }
+        /* SIGNATURES - Stack on Mobile */
+        .sig-section { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            padding: 15px; 
+            background: #fff;
+        }
+        .sig-box { font-weight: 700; font-size: 11px; display: flex; flex-direction: column; gap: 5px; }
+        .sig-input { border: 1px solid #ccc; padding: 8px; width: 100%; border-radius: 4px; }
 
-        /* VERSION INFO BAR */
-        .version-bar { display: flex; justify-content: space-between; padding: 15px 14px 5px 14px; font-size: 10px; color: #555; border-top: 1px solid #eee; margin-top: 20px; }
-        .version-bar span { flex: 1; }
-        .version-bar .center { text-align: center; font-weight: 600; }
-        .version-bar .right { text-align: right; }
+        /* VERSION INFO */
+        .version-bar { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 10px; 
+            font-size: 9px; 
+            color: #777; 
+            border-top: 1px solid #eee;
+            gap: 3px;
+        }
 
-        /* FOOTER / BUTTONS */
-        .footer { border-top: 1px solid #aaa; display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #f7f7f7; }
-        .btn-group { display: flex; gap: 8px; }
-        button { padding: 6px 15px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 2px; border: 1px solid #1a5276; }
-        .btn-save { background: #1a5276; color: #fff; }
-        .btn-csv { background: #1e8449; color: white; border-color: #1e8449; }
-        .btn-print { background: white; color: #1a5276; }
+        /* FOOTER BUTTONS */
+        .footer { 
+            padding: 10px; 
+            background: #f7f7f7; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            border-top: 1px solid #aaa;
+        }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 12px; font-size: 13px; font-weight: 700; border-radius: 4px; cursor: pointer; }
+        .btn-save { background: #1a5276; color: white; grid-column: span 2; }
+        .btn-csv { background: #1e8449; color: white; border: none; }
+        .btn-print { background: white; border: 1px solid #1a5276; color: #1a5276; }
+
+        /* DESKTOP ADJUSTMENTS */
+        @media (min-width: 768px) {
+            .header { grid-template-columns: 200px 1fr 200px; }
+            .sig-section { flex-direction: row; justify-content: space-between; }
+            .sig-box { flex-direction: row; align-items: flex-end; }
+            .sig-input { width: 200px; }
+            .version-bar { flex-direction: row; justify-content: space-between; }
+            .footer { flex-direction: row; justify-content: space-between; }
+            .btn-group { display: flex; }
+            .btn-save { order: 3; }
+        }
 
         @media print { 
-            .footer, .settings-bar, .date-cell input { display: none; } 
-            body { padding: 0; background: white; } 
-            .page { box-shadow: none; border: none; width: 100%; }
+            .footer, .settings-bar, .date-cell input, .btn-group { display: none; } 
+            .table-wrap { overflow: visible; max-height: none; }
+            table { min-width: 100%; }
         }
     </style>
 </head>
@@ -79,34 +149,30 @@
 <body>
     <div class="page">
         <div class="header">
-            <div class="logo-cell">
+            <div class="logo-cell" style="display:none; display:flex;">
                 <div class="brand">Global<strong>Logic</strong></div>
-                <div class="sub">A Hitachi Group Company</div>
             </div>
             <div class="title-cell">Daily UPS Health Check</div>
-            <div class="doc-cell">GL02-FM-ES (M&amp;E)-007</div>
+            <div class="doc-cell">GL02-FM-ES-007</div>
         </div>
 
         <div class="address-banner">
-            <p>            <strong>GlobalLogic India Private Limited</strong> Facility Address: Tower-3, Oxygen Business Park Pvt. Ltd. SEZ, Plot No. 7, Sec-144, Noida (UP)</p>
+            <strong>GlobalLogic India Private Limited</strong>
+            <p>Oxygen Business Park, Plot 7, Sec-144, Noida</p>
         </div>
 
         <div class="settings-bar">
-            <span>⚙️ Limits:</span>
             <div class="settings-group">
-                <span>Temp: Min</span> <input type="number" id="limit-temp-min" value="22" oninput="applyAllThresholds()">
-                <span>Max</span> <input type="number" id="limit-temp-max" value="24" oninput="applyAllThresholds()">
+                <span>Temp:</span> <input type="number" id="limit-temp-min" value="22" oninput="applyAllThresholds()"> - <input type="number" id="limit-temp-max" value="24" oninput="applyAllThresholds()">
             </div>
             <div class="settings-group">
-                <span>Volt: Min</span> <input type="number" id="limit-volt-min" value="210" oninput="applyAllThresholds()">
-                <span>Max</span> <input type="number" id="limit-volt-max" value="245" oninput="applyAllThresholds()">
+                <span>Volt:</span> <input type="number" id="limit-volt-min" value="210" oninput="applyAllThresholds()"> - <input type="number" id="limit-volt-max" value="245" oninput="applyAllThresholds()">
             </div>
         </div>
 
         <div class="subheader">
-            <div class="capacity-cell">UPS Capacity 80 KVA</div>
+            <div class="capacity-cell">80 KVA</div>
             <div class="date-cell">
-                <span>Date:</span>
                 <input type="date" id="check-date" onchange="loadDateData()">
             </div>
         </div>
@@ -115,24 +181,24 @@
             <table id="checklist">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width:55px">Time</th>
-                        <th colspan="3">Input Voltage</th>
-                        <th colspan="3">Input Current</th>
-                        <th colspan="3">Output Voltage</th>
-                        <th colspan="3">Output Current</th>
-                        <th rowspan="2" style="width:45px">O/P KVA</th>
-                        <th rowspan="2" style="width:45px">O/P KW</th>
+                        <th rowspan="2" style="width:60px" class="time-label">Time</th>
+                        <th colspan="3">Input Volt</th>
+                        <th colspan="3">In Current</th>
+                        <th colspan="3">Output Volt</th>
+                        <th colspan="3">Out Current</th>
+                        <th rowspan="2" style="width:50px">KVA</th>
+                        <th rowspan="2" style="width:50px">KW</th>
                         <th rowspan="2" style="width:40px">Hz</th>
                         <th colspan="2">Battery</th>
-                        <th rowspan="2" style="width:70px">Temp °C</th>
-                        <th rowspan="2" style="width:100px">Technician Signature</th>
+                        <th rowspan="2" style="width:60px">Temp</th>
+                        <th rowspan="2" style="width:100px">Tech Sign</th>
                     </tr>
                     <tr>
                         <th>RY</th><th>YB</th><th>BR</th>
                         <th>IR</th><th>IY</th><th>IB</th>
                         <th>RY</th><th>YB</th><th>BR</th>
                         <th>IR</th><th>IY</th><th>IB</th>
-                        <th>Volt</th><th>A</th>
+                        <th>V</th><th>A</th>
                     </tr>
                 </thead>
                 <tbody id="data-body"></tbody>
@@ -140,30 +206,28 @@
         </div>
 
         <div class="sig-section">
-            <div class="sig-box">Supervisor Signature: <input type="text" id="sig-supervisor" class="sig-input" placeholder="Enter name"></div>
-            <div class="sig-box">Employee Services Signature: <input type="text" id="sig-employee" class="sig-input" placeholder="Enter name"></div>
+            <div class="sig-box">Supervisor Sign: <input type="text" id="sig-supervisor" class="sig-input"></div>
+            <div class="sig-box">Employee Svc Sign: <input type="text" id="sig-employee" class="sig-input"></div>
         </div>
 
         <div class="version-bar">
-            <span>Version 1.5</span>
-            <span class="center">Classification - GL Restricted</span>
-            <span class="right">Effective Date: 12-Nov-2021</span>
+            <span>V1.5</span>
+            <span>Classification - GL Restricted</span>
+            <span>Eff: 12-Nov-2021</span>
         </div>
 
         <div class="footer">
-            <span>GL02-FM-ES (M&amp;E)-007 | GlobalLogic – Hitachi Group</span>
             <div class="btn-group">
                 <button class="btn-print" onclick="window.print()">🖨 Print</button>
-                <button class="btn-csv" onclick="exportToCSV()">📊 Export CSV</button>
-                <button class="btn-save" onclick="saveData()">💾 Save</button>
+                <button class="btn-csv" onclick="exportToCSV()">📊 CSV</button>
+                <button class="btn-save" onclick="saveData()">💾 Save Data</button>
             </div>
         </div>
     </div>
 
     <script>
         const SHEET_ID = "UPS_LOG_007";
-        const TIMES = ['0:00', '2:00', '4:00', '6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
-        const COL_COUNT = 19; 
+        const TIMES = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
         const VOLT_COLS = [0, 1, 2, 6, 7, 8, 15]; 
         const TEMP_COL = 17;
         const SIG_COL = 18;
@@ -177,13 +241,12 @@
                 td0.className = 'time-label';
                 td0.textContent = t;
                 tr.appendChild(td0);
-                for (let ci = 0; ci < COL_COUNT; ci++) {
+                for (let ci = 0; ci < 19; ci++) {
                     const td = document.createElement('td');
                     const inp = document.createElement('input');
-                    inp.type = 'text';
+                    inp.type = (ci === SIG_COL) ? 'text' : 'tel'; // 'tel' brings up numeric keypad on mobile
                     inp.dataset.row = ri;
                     inp.dataset.col = ci;
-                    
                     if (ci !== SIG_COL) {
                         inp.maxLength = 3;
                         inp.addEventListener('input', function() {
@@ -201,7 +264,8 @@
         function checkThreshold(input) {
             const col = parseInt(input.dataset.col);
             const val = parseFloat(input.value);
-            if (isNaN(val)) { input.className = ""; return; }
+            input.classList.remove('val-high', 'val-low');
+            if (isNaN(val)) return;
             let min, max;
             if (VOLT_COLS.includes(col)) {
                 min = parseFloat(document.getElementById('limit-volt-min').value);
@@ -209,46 +273,26 @@
             } else if (col === TEMP_COL) {
                 min = parseFloat(document.getElementById('limit-temp-min').value);
                 max = parseFloat(document.getElementById('limit-temp-max').value);
-            } else { return; }
-            input.className = "";
+            } else return;
             if (val > max) input.classList.add('val-high');
-            if (val < min) input.classList.add('val-low');
+            else if (val < min) input.classList.add('val-low');
         }
 
         function applyAllThresholds() {
-            document.querySelectorAll('#data-body input').forEach(inp => {
-                if(parseInt(inp.dataset.col) !== SIG_COL) checkThreshold(inp);
-            });
-            saveSettings();
-        }
-
-        function saveSettings() {
-            const settings = {
-                tMin: document.getElementById('limit-temp-min').value,
-                tMax: document.getElementById('limit-temp-max').value,
+            document.querySelectorAll('#data-body input').forEach(inp => checkThreshold(inp));
+            localStorage.setItem(`${SHEET_ID}_limits`, JSON.stringify({
                 vMin: document.getElementById('limit-volt-min').value,
-                vMax: document.getElementById('limit-volt-max').value
-            };
-            localStorage.setItem(`${SHEET_ID}_settings`, JSON.stringify(settings));
-        }
-
-        function loadSettings() {
-            const saved = JSON.parse(localStorage.getItem(`${SHEET_ID}_settings`));
-            if (saved) {
-                document.getElementById('limit-temp-min').value = saved.tMin;
-                document.getElementById('limit-temp-max').value = saved.tMax;
-                document.getElementById('limit-volt-min').value = saved.vMin;
-                document.getElementById('limit-volt-max').value = saved.vMax;
-            }
+                vMax: document.getElementById('limit-volt-max').value,
+                tMin: document.getElementById('limit-temp-min').value,
+                tMax: document.getElementById('limit-temp-max').value
+            }));
         }
 
         function loadDateData() {
             const date = document.getElementById('check-date').value;
-            const storageKey = `${SHEET_ID}_${date}`;
-            const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            const saved = JSON.parse(localStorage.getItem(`${SHEET_ID}_${date}`) || '{}');
             document.querySelectorAll('#data-body input').forEach(inp => {
-                const key = `r${inp.dataset.row}c${inp.dataset.col}`;
-                inp.value = saved[key] || '';
+                inp.value = saved[`r${inp.dataset.row}c${inp.dataset.col}`] || '';
             });
             document.getElementById('sig-supervisor').value = saved['sig_sup'] || '';
             document.getElementById('sig-employee').value = saved['sig_emp'] || '';
@@ -257,41 +301,41 @@
 
         function saveData() {
             const date = document.getElementById('check-date').value;
-            const storageKey = `${SHEET_ID}_${date}`;
-            const data = {};
+            const data = {
+                sig_sup: document.getElementById('sig-supervisor').value,
+                sig_emp: document.getElementById('sig-employee').value
+            };
             document.querySelectorAll('#data-body input').forEach(inp => {
                 data[`r${inp.dataset.row}c${inp.dataset.col}`] = inp.value;
             });
-            data['sig_sup'] = document.getElementById('sig-supervisor').value;
-            data['sig_emp'] = document.getElementById('sig-employee').value;
-            localStorage.setItem(storageKey, JSON.stringify(data));
-            const btn = document.querySelector('.btn-save');
-            btn.textContent = '✓ Saved';
-            setTimeout(() => btn.textContent = '💾 Save', 1500);
+            localStorage.setItem(`${SHEET_ID}_${date}`, JSON.stringify(data));
+            alert("Saved successfully!");
         }
 
         function exportToCSV() {
             const date = document.getElementById('check-date').value;
-            let csv = ["Daily UPS Health Check - " + date + "\n"];
-            document.querySelectorAll("table tr").forEach(row => {
-                let rowData = [];
-                row.querySelectorAll("th, td").forEach(col => {
-                    let val = col.querySelector('input') ? col.querySelector('input').value : col.innerText.replace(/\n/g, " ");
-                    rowData.push('"' + val + '"');
-                });
-                csv.push(rowData.join(","));
+            let csv = ["Time,In RY,In YB,In BR,In IR,In IY,In IB,Out RY,Out YB,Out BR,Out IR,Out IY,Out IB,KVA,KW,Hz,Bat V,Bat A,Temp,Sign\n"];
+            TIMES.forEach((t, ri) => {
+                let row = [t];
+                for(let ci=0; ci<19; ci++) {
+                    row.push(document.querySelector(`input[data-row="${ri}"][data-col="${ci}"]`).value);
+                }
+                csv.push(row.join(","));
             });
-            csv.push(`\nSupervisor Signature,"${document.getElementById('sig-supervisor').value}"`);
-            csv.push(`Employee Services Signature,"${document.getElementById('sig-employee').value}"`);
             const blob = new Blob([csv.join("\n")], { type: 'text/csv' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = `UPS_Report_${date}.csv`;
-            link.click();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `UPS_${date}.csv`;
+            a.click();
         }
 
+        // Init
+        const limits = JSON.parse(localStorage.getItem(`${SHEET_ID}_limits`) || '{"vMin":210,"vMax":245,"tMin":22,"tMax":24}');
+        document.getElementById('limit-volt-min').value = limits.vMin;
+        document.getElementById('limit-volt-max').value = limits.vMax;
+        document.getElementById('limit-temp-min').value = limits.tMin;
+        document.getElementById('limit-temp-max').value = limits.tMax;
         document.getElementById('check-date').value = new Date().toISOString().split('T')[0];
-        loadSettings();
         buildRows();
         loadDateData();
     </script>
