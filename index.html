@@ -12,10 +12,8 @@
 
         /* HEADER */
         .header { display: grid; grid-template-columns: 220px 1fr 220px; border-bottom: 2px solid #555; }
-        .logo-cell { padding: 8px 12px; border-right: 1px solid #999; display: flex; flex-direction: column; justify-content: center; }
-        .logo-cell .brand { font-size: 22px; font-weight: 300; color: #1a1a1a; line-height: 1; }
-        .logo-cell .brand strong { font-weight: 700; }
-        .logo-cell .sub { font-size: 8.5px; color: #555; margin-top: 2px; }
+        .logo-cell { padding: 8px 12px; border-right: 1px solid #999; display: flex; justify-content: center; align-items: center; }
+        .logo-cell img { max-width: 100%; max-height: 45px; object-fit: contain; }
         .title-cell { background: #7f7f7f; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 700; padding: 10px; }
         .doc-cell { border-left: 1px solid #999; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; padding: 8px 12px; text-align: center; }
 
@@ -89,7 +87,7 @@
         .btn-csv { background: #1e8449; color: white; border-color: #1e8449; }
         .btn-print { background: white; color: #1a5276; }
 
-        /* FIX 1: Ensure background colors print properly on PDF */
+        /* Ensure background colors print properly on PDF */
         @media print { 
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .footer, .settings-bar, .date-cell input { display: none; } 
@@ -103,8 +101,7 @@
     <div class="page">
         <div class="header">
             <div class="logo-cell">
-                <div class="brand">Global<strong>Logic</strong></div>
-                <div class="sub">A Hitachi Group Company</div>
+                <img src="globallogiclogo.png" alt="GlobalLogic A Hitachi Group Company">
             </div>
             <div class="title-cell">Daily UPS Health Check</div>
             <div class="doc-cell">GL02-FM-ES (M&amp;E)-007</div>
@@ -297,7 +294,7 @@
             const date = document.getElementById('check-date').value;
             let csv = ["Daily UPS Health Check - " + date + "\n"];
             
-            // FIX 2: Manually map the flat headers so Excel aligns them with the correct columns
+            // Manually map the flat headers so Excel aligns them with the correct columns
             const flatHeaders = [
                 "Time", 
                 "Input Voltage (RY)", "Input Voltage (YB)", "Input Voltage (BR)",
