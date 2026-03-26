@@ -23,7 +23,7 @@
         .address-banner p { font-size: 11px; color: #555; }
 
         /* SETTINGS BAR */
-        .settings-bar { background: #f0f0f0; border-bottom: 1px solid #999; display: flex; padding: 8px 15px; gap: 20px; align-items: center; font-weight: 600; font-size: 11px; }
+        .settings-bar { background: #f0f0f0; border-bottom: 1px solid #999; display: none; padding: 8px 15px; gap: 20px; align-items: center; font-weight: 600; font-size: 11px; }
         .settings-group { display: flex; align-items: center; gap: 8px; border-right: 1px solid #ccc; padding-right: 15px; }
         .settings-group:last-child { border: none; }
         .settings-bar input { 
@@ -32,13 +32,25 @@
             border: 1px solid #999; 
             text-align: center; 
             border-radius: 3px; 
-            -moz-appearance: textfield; 
         }
         .settings-bar input::-webkit-outer-spin-button,
         .settings-bar input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
+
+        /* UPS SELECTOR DROPDOWN */
+        .ups-selector-group { display: flex; align-items: center; gap: 8px; }
+        .ups-selector-group label { font-weight: 600; font-size: 12px; color: #333; }
+        .ups-selector-group select { 
+            padding: 4px 8px; 
+            border: 1px solid #999; 
+            border-radius: 3px; 
+            font-size: 12px; 
+            cursor: pointer;
+            background: #fff;
+        }
+        .ups-selector-group select:focus { outline: none; box-shadow: 0 0 0 2px #1a5276; }
 
         /* SUB-HEADER */
         .subheader { display: grid; grid-template-columns: 1fr 220px; border-bottom: 1px solid #999; }
@@ -69,9 +81,10 @@
         .val-low { color: #008b8b !important; font-weight: 700; }
 
         /* SIGNATURE SECTION */
-        .sig-section { display: flex; justify-content: space-between; padding: 30px 40px 10px 40px; margin-top: 10px; }
+        .sig-section { display: none; justify-content: space-between; padding: 30px 40px 10px 40px; margin-top: 10px; }
         .sig-box { font-size: 12px; font-weight: 600; color: #333; display: flex; align-items: flex-end; }
-        .sig-input { border: none; border-bottom: 1px solid #000; width: 220px; margin-left: 8px; font-family: inherit; font-size: 13px; outline: none; padding-bottom: 2px; text-align: center; }
+        .sig-input { border: none; border-bottom: 1px solid #000; width: 220px; margin-left: 8px; font-family: inherit; font-size: 13px; outline: none; padding-bottom: 2px; text-align: center; background: transparent; }
+        .sig-input:disabled { border-bottom: 1px dashed #777; color: #555; }
 
         /* VERSION INFO BAR */
         .version-bar { display: flex; justify-content: space-between; padding: 15px 14px 5px 14px; font-size: 10px; color: #555; border-top: 1px solid #eee; margin-top: 20px; }
@@ -93,6 +106,19 @@
             .footer, .settings-bar, .date-cell input { display: none; } 
             body { padding: 0; background: white; } 
             .page { box-shadow: none; border: none; width: 100%; }
+            
+            /* Remove dropdown styling for print */
+            .ups-selector-group select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                border: none;
+                background: transparent;
+                font-size: 13px;
+                font-weight: 600;
+                padding: 0;
+                color: #000;
+            }
         }
     </style>
 </head>
@@ -108,7 +134,7 @@
         </div>
 
         <div class="address-banner">
-            <p>            <strong>GlobalLogic India Private Limited</strong> Facility Address: Tower-3, Oxygen Business Park Pvt. Ltd. SEZ, Plot No. 7, Sec-144, Noida (UP)</p>
+            <p><strong>GlobalLogic India Private Limited</strong> Facility Address: Tower-3, Oxygen Business Park Pvt. Ltd. SEZ, Plot No. 7, Sec-144, Noida (UP)</p>
         </div>
 
         <div class="settings-bar">
@@ -124,7 +150,18 @@
         </div>
 
         <div class="subheader">
-            <div class="capacity-cell">UPS Capacity 80 KVA</div>
+            <div style="display: flex; align-items: center; gap: 20px; padding: 6px 10px; flex: 1;">
+                <div class="capacity-cell" style="padding: 0; border: none;">UPS Capacity 80 KVA</div>
+                <div class="ups-selector-group">
+                    <select id="ups-unit" onchange="switchUPSSheet()">
+                        <option value="1">UPS 1</option>
+                        <option value="2">UPS 2</option>
+                        <option value="3">UPS 3</option>
+                        <option value="4">UPS 4</option>
+                        <option value="5">UPS 5</option>
+                    </select>
+                </div>
+            </div>
             <div class="date-cell">
                 <span>Date:</span>
                 <input type="date" id="check-date" onchange="loadDateData()">
@@ -144,7 +181,7 @@
                         <th rowspan="2" style="width:45px">O/P KW</th>
                         <th rowspan="2" style="width:40px">Hz</th>
                         <th colspan="2">Battery</th>
-                        <th rowspan="2" style="width:70px">Temp °C</th>
+                        <th rowspan="2" style="width:70px">Room Temp.  in C (22 to 24)</th>
                         <th rowspan="2" style="width:100px">Technician Signature</th>
                     </tr>
                     <tr>
@@ -159,7 +196,7 @@
             </table>
         </div>
 
-        <div class="sig-section">
+        <div class="sig-section" id="sig-section">
             <div class="sig-box">Supervisor Signature: <input type="text" id="sig-supervisor" class="sig-input" placeholder="Enter name"></div>
             <div class="sig-box">Employee Services Signature: <input type="text" id="sig-employee" class="sig-input" placeholder="Enter name"></div>
         </div>
@@ -181,7 +218,10 @@
     </div>
 
     <script>
-        const SHEET_ID = "UPS_LOG_007";
+        const UPS_UNITS = ['1', '2', '3', '4', '5'];
+        const BASE_SHEET_ID = "UPS_LOG_007";
+        let currentUPS = '1'; 
+        let SHEET_ID = `${BASE_SHEET_ID}_UPS${currentUPS}`;
         const TIMES = ['0:00', '2:00', '4:00', '6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
         const COL_COUNT = 19; 
         const VOLT_COLS = [0, 1, 2, 6, 7, 8, 15]; 
@@ -206,16 +246,66 @@
                     
                     if (ci !== SIG_COL) {
                         inp.maxLength = 3;
-                        inp.addEventListener('input', function() {
+                    }
+
+                    inp.addEventListener('input', function() {
+                        if (ci !== SIG_COL) {
                             this.value = this.value.replace(/[^0-9]/g, '');
                             checkThreshold(this);
-                        });
-                    }
+                        }
+                        // Check if we should unlock signatures every time an input changes
+                        checkSignatureVisibility();
+                    });
+                    
                     td.appendChild(inp);
                     tr.appendChild(td);
                 }
                 tbody.appendChild(tr);
             });
+        }
+
+        // --- NEW LOGIC FOR SIGNATURE VISIBILITY ---
+        function checkSignatureVisibility() {
+            const sigSection = document.getElementById('sig-section');
+            const checkDateStr = document.getElementById('check-date').value;
+            if (!checkDateStr) return;
+
+            // 1. Validate if ALL table inputs are filled (including technician signature column)
+            const allInputs = document.querySelectorAll('#data-body input');
+            let allFilled = true;
+            for (let inp of allInputs) {
+                if (inp.value.trim() === '') {
+                    allFilled = false;
+                    break;
+                }
+            }
+
+            // 2. Determine if it is the "Next Day" (24:00 of the check date)
+            const checkDateObj = new Date(checkDateStr);
+            checkDateObj.setHours(0,0,0,0);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            const diffTime = today.getTime() - checkDateObj.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            const supSigInput = document.getElementById('sig-supervisor');
+            const empSigInput = document.getElementById('sig-employee');
+            
+            // Check if signatures already exist (so historical records still show them on print)
+            const hasSignatures = supSigInput.value.trim() !== '' || empSigInput.value.trim() !== '';
+
+            // If completely filled AND it's either exactly 1 day later (the 24h window) OR it has past signatures
+            if (allFilled && (diffDays === 1 || hasSignatures)) {
+                sigSection.style.display = 'flex';
+                
+                // If it's past the 24 hour window (e.g., diffDays > 1), keep visible but disable editing
+                const isEditable = (diffDays === 1);
+                supSigInput.disabled = !isEditable;
+                empSigInput.disabled = !isEditable;
+            } else {
+                sigSection.style.display = 'none';
+            }
         }
 
         function checkThreshold(input) {
@@ -262,6 +352,17 @@
             }
         }
 
+        function switchUPSSheet() {
+            saveData();
+            const selectedUPS = document.getElementById('ups-unit').value;
+            currentUPS = selectedUPS;
+            SHEET_ID = `${BASE_SHEET_ID}_UPS${currentUPS}`;
+            document.getElementById('check-date').value = new Date().toISOString().split('T')[0];
+            
+            loadSettings();
+            loadDateData();
+        }
+
         function loadDateData() {
             const date = document.getElementById('check-date').value;
             const storageKey = `${SHEET_ID}_${date}`;
@@ -272,7 +373,9 @@
             });
             document.getElementById('sig-supervisor').value = saved['sig_sup'] || '';
             document.getElementById('sig-employee').value = saved['sig_emp'] || '';
+            
             applyAllThresholds();
+            checkSignatureVisibility(); // Evaluate visibility after data loads
         }
 
         function saveData() {
@@ -288,13 +391,13 @@
             const btn = document.querySelector('.btn-save');
             btn.textContent = '✓ Saved';
             setTimeout(() => btn.textContent = '💾 Save', 1500);
+            checkSignatureVisibility();
         }
 
         function exportToCSV() {
             const date = document.getElementById('check-date').value;
             let csv = ["Daily UPS Health Check - " + date + "\n"];
             
-            // Manually map the flat headers so Excel aligns them with the correct columns
             const flatHeaders = [
                 "Time", 
                 "Input Voltage (RY)", "Input Voltage (YB)", "Input Voltage (BR)",
@@ -307,7 +410,6 @@
             ];
             csv.push('"' + flatHeaders.join('","') + '"');
 
-            // Collect only data from the table body
             document.querySelectorAll("#data-body tr").forEach(row => {
                 let rowData = [];
                 row.querySelectorAll("td").forEach(col => {
@@ -317,7 +419,6 @@
                 csv.push(rowData.join(","));
             });
             
-            // Adding a spacer line and signatures
             csv.push("");
             csv.push(`Supervisor Signature,"${document.getElementById('sig-supervisor').value}"`);
             csv.push(`Employee Services Signature,"${document.getElementById('sig-employee').value}"`);
