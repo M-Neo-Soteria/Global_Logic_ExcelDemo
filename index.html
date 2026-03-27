@@ -8,13 +8,15 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 12px; background: #e8e8e8; display: flex; justify-content: center; padding: 24px 16px; }
-        .page { background: #fff; width: 1150px; border: 1px solid #aaa; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); display: flex; flex-direction: column; }
+        
+        /* Changed width to 100% and added max-width for responsiveness */
+        .page { background: #fff; width: 100%; max-width: 1150px; border: 1px solid #aaa; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); display: flex; flex-direction: column; }
 
         /* HEADER */
         .header { display: grid; grid-template-columns: 220px 1fr 220px; border-bottom: 2px solid #555; }
         .logo-cell { padding: 8px 12px; border-right: 1px solid #999; display: flex; justify-content: center; align-items: center; }
         .logo-cell img { max-width: 100%; max-height: 45px; object-fit: contain; }
-        .title-cell { background: #7f7f7f; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 700; padding: 10px; }
+        .title-cell { background: #7f7f7f; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 700; padding: 10px; text-align: center; }
         .doc-cell { border-left: 1px solid #999; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; padding: 8px 12px; text-align: center; }
 
         /* ADDRESS BANNER */
@@ -23,7 +25,7 @@
         .address-banner p { font-size: 11px; color: #555; }
 
         /* SETTINGS BAR */
-        .settings-bar { background: #f0f0f0; border-bottom: 1px solid #999; display: none; padding: 8px 15px; gap: 20px; align-items: center; font-weight: 600; font-size: 11px; }
+        .settings-bar { background: #f0f0f0; border-bottom: 1px solid #999; display: none; padding: 8px 15px; gap: 20px; align-items: center; font-weight: 600; font-size: 11px; flex-wrap: wrap; }
         .settings-group { display: flex; align-items: center; gap: 8px; border-right: 1px solid #ccc; padding-right: 15px; }
         .settings-group:last-child { border: none; }
         .settings-bar input { 
@@ -59,8 +61,8 @@
         .date-cell input { border: 1px solid #ccc; font-size: 12px; padding: 1px 4px; }
 
         /* TABLE */
-        .table-wrap { overflow-x: auto; flex-grow: 1; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .table-wrap { overflow-x: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; min-width: 1000px; border-collapse: collapse; table-layout: fixed; } /* min-width to force horizontal scroll on small screens */
         thead tr th { background: #d9d9d9; border: 1px solid #999; text-align: center; font-weight: 700; font-size: 10px; padding: 3px 2px; }
         tbody tr td { border: 1px solid #bbb; height: 26px; text-align: center; }
         tbody tr td.time-label { font-weight: 600; background: #f2f2f2; }
@@ -93,20 +95,69 @@
         .version-bar .right { text-align: right; }
 
         /* FOOTER / BUTTONS */
-        .footer { border-top: 1px solid #aaa; display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #f7f7f7; }
-        .btn-group { display: flex; gap: 8px; }
-        button { padding: 6px 15px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 2px; border: 1px solid #1a5276; }
+        .footer { border-top: 1px solid #aaa; display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f7f7f7; flex-wrap: wrap; gap: 10px; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        button { padding: 8px 15px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 2px; border: 1px solid #1a5276; }
         .btn-save { background: #1a5276; color: #fff; }
         .btn-csv { background: #1e8449; color: white; border-color: #1e8449; }
         .btn-print { background: white; color: #1a5276; }
 
-        /* Ensure background colors print properly on PDF */
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 768px) {
+            body { padding: 10px 5px; }
+            .header { grid-template-columns: 1fr; }
+            .logo-cell { border-right: none; border-bottom: 1px solid #999; }
+            .doc-cell { border-left: none; border-top: 1px solid #999; }
+            
+            .subheader { grid-template-columns: 1fr; }
+            .subheader > div:first-child { flex-direction: column; align-items: flex-start !important; gap: 10px !important; }
+            .capacity-cell { border-right: none; border-bottom: 1px solid #999; width: 100%; padding-bottom: 8px !important; }
+            .date-cell { border-top: 1px solid #999; justify-content: flex-start; padding: 10px; }
+
+            .settings-bar { flex-direction: column; align-items: flex-start; }
+            .settings-group { border-right: none; padding-right: 0; }
+            
+            .sig-section { flex-direction: column; gap: 20px; padding: 20px; }
+            .sig-box { flex-direction: column; align-items: flex-start; gap: 5px; width: 100%; }
+            .sig-input { width: 100%; margin-left: 0; }
+
+            .version-bar { flex-direction: column; gap: 8px; text-align: center; }
+            .version-bar .right { text-align: center; }
+            
+            .footer { flex-direction: column; text-align: center; justify-content: center; }
+            .btn-group { justify-content: center; width: 100%; }
+            .btn-group button { flex-grow: 1; }
+        }
+
+        /* --- PRINT MEDIA QUERIES --- */
         @media print { 
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .footer, .settings-bar, .date-cell input { display: none; } 
-            body { padding: 0; background: white; } 
-            .page { box-shadow: none; border: none; width: 100%; }
             
+            /* Hide non-printable elements */
+            .footer, .settings-bar { display: none; } 
+            
+            /* Page sizing and orientation */
+            @page { size: landscape; margin: 10mm; }
+            body { padding: 0; background: white; } 
+            .page { box-shadow: none; border: none; width: 100%; max-width: none; }
+            
+            /* Fix table getting cut off on the right side */
+            table { min-width: auto !important; width: 100%; }
+            .table-wrap { overflow: visible; }
+            
+            /* Fix date input styling for print so it shows up */
+            .date-cell input {
+                border: none;
+                background: transparent;
+                color: #000;
+                padding: 0;
+                font-family: inherit;
+                outline: none;
+            }
+            .date-cell input::-webkit-calendar-picker-indicator {
+                display: none; /* Hide calendar dropdown icon */
+            }
+
             /* Remove dropdown styling for print */
             .ups-selector-group select {
                 -webkit-appearance: none;
@@ -181,7 +232,7 @@
                         <th rowspan="2" style="width:45px">O/P KW</th>
                         <th rowspan="2" style="width:40px">Hz</th>
                         <th colspan="2">Battery</th>
-                        <th rowspan="2" style="width:70px">Room Temp.  in C (22 to 24)</th>
+                        <th rowspan="2" style="width:70px">Room Temp. in &deg;C (22 to 24)</th>
                         <th rowspan="2" style="width:100px">Technician Signature</th>
                     </tr>
                     <tr>
