@@ -7,32 +7,8 @@
     <title>Daily UPS Health Check – GL02-FM-ES (M&E)-007</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        /* Updated Body to remove centering that cuts off content on mobile */
-        body { 
-            font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; 
-            font-size: 12px; 
-            background: #e8e8e8; 
-        }
-
-        /* NEW WRAPPER for Responsiveness */
-        .wrapper {
-            width: 100%;
-            overflow-x: auto; /* Adds horizontal scrollbar on small screens */
-            padding: 24px 16px;
-        }
-
-        /* PAGE stays exactly as you designed it */
-        .page { 
-            background: #fff; 
-            width: 1150px; /* Forced width to keep sheet format intact */
-            min-width: 1150px;
-            margin: 0 auto; /* Centers the sheet on larger screens */
-            border: 1px solid #aaa; 
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); 
-            display: flex; 
-            flex-direction: column; 
-        }
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 12px; background: #e8e8e8; display: flex; justify-content: center; padding: 24px 16px; }
+        .page { background: #fff; width: 1150px; border: 1px solid #aaa; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); display: flex; flex-direction: column; }
 
         /* HEADER */
         .header { display: grid; grid-template-columns: 220px 1fr 220px; border-bottom: 2px solid #555; }
@@ -128,11 +104,8 @@
         @media print { 
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .footer, .settings-bar, .date-cell input { display: none; } 
-            
-            /* Print reset for new wrapper */
             body { padding: 0; background: white; } 
-            .wrapper { padding: 0; overflow: visible; }
-            .page { box-shadow: none; border: none; width: 100%; min-width: 0; margin: 0; }
+            .page { box-shadow: none; border: none; width: 100%; }
             
             /* Remove dropdown styling for print */
             .ups-selector-group select {
@@ -151,97 +124,95 @@
 </head>
 
 <body>
-    <div class="wrapper">
-        <div class="page">
-            <div class="header">
-                <div class="logo-cell">
-                    <img src="globallogiclogo.png" alt="GlobalLogic A Hitachi Group Company">
-                </div>
-                <div class="title-cell">Daily UPS Health Check</div>
-                <div class="doc-cell">GL02-FM-ES (M&amp;E)-007</div>
+    <div class="page">
+        <div class="header">
+            <div class="logo-cell">
+                <img src="globallogiclogo.png" alt="GlobalLogic A Hitachi Group Company">
             </div>
+            <div class="title-cell">Daily UPS Health Check</div>
+            <div class="doc-cell">GL02-FM-ES (M&amp;E)-007</div>
+        </div>
 
-            <div class="address-banner">
-                <p><strong>GlobalLogic India Private Limited</strong> Facility Address: Tower-3, Oxygen Business Park Pvt. Ltd. SEZ, Plot No. 7, Sec-144, Noida (UP)</p>
+        <div class="address-banner">
+            <p><strong>GlobalLogic India Private Limited</strong> Facility Address: Tower-3, Oxygen Business Park Pvt. Ltd. SEZ, Plot No. 7, Sec-144, Noida (UP)</p>
+        </div>
+
+        <div class="settings-bar">
+            <span>⚙️ Limits:</span>
+            <div class="settings-group">
+                <span>Temp: Min</span> <input type="number" id="limit-temp-min" value="22" oninput="applyAllThresholds()">
+                <span>Max</span> <input type="number" id="limit-temp-max" value="24" oninput="applyAllThresholds()">
             </div>
-
-            <div class="settings-bar">
-                <span>⚙️ Limits:</span>
-                <div class="settings-group">
-                    <span>Temp: Min</span> <input type="number" id="limit-temp-min" value="22" oninput="applyAllThresholds()">
-                    <span>Max</span> <input type="number" id="limit-temp-max" value="24" oninput="applyAllThresholds()">
-                </div>
-                <div class="settings-group">
-                    <span>Volt: Min</span> <input type="number" id="limit-volt-min" value="210" oninput="applyAllThresholds()">
-                    <span>Max</span> <input type="number" id="limit-volt-max" value="245" oninput="applyAllThresholds()">
-                </div>
+            <div class="settings-group">
+                <span>Volt: Min</span> <input type="number" id="limit-volt-min" value="210" oninput="applyAllThresholds()">
+                <span>Max</span> <input type="number" id="limit-volt-max" value="245" oninput="applyAllThresholds()">
             </div>
+        </div>
 
-            <div class="subheader">
-                <div style="display: flex; align-items: center; gap: 20px; padding: 6px 10px; flex: 1;">
-                    <div class="capacity-cell" style="padding: 0; border: none;">UPS Capacity 80 KVA</div>
-                    <div class="ups-selector-group">
-                        <select id="ups-unit" onchange="switchUPSSheet()">
-                            <option value="1">UPS 1</option>
-                            <option value="2">UPS 2</option>
-                            <option value="3">UPS 3</option>
-                            <option value="4">UPS 4</option>
-                            <option value="5">UPS 5</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="date-cell">
-                    <span>Date:</span>
-                    <input type="date" id="check-date" onchange="loadDateData()">
+        <div class="subheader">
+            <div style="display: flex; align-items: center; gap: 20px; padding: 6px 10px; flex: 1;">
+                <div class="capacity-cell" style="padding: 0; border: none;">UPS Capacity 80 KVA</div>
+                <div class="ups-selector-group">
+                    <select id="ups-unit" onchange="switchUPSSheet()">
+                        <option value="1">UPS 1</option>
+                        <option value="2">UPS 2</option>
+                        <option value="3">UPS 3</option>
+                        <option value="4">UPS 4</option>
+                        <option value="5">UPS 5</option>
+                    </select>
                 </div>
             </div>
-
-            <div class="table-wrap">
-                <table id="checklist">
-                    <thead>
-                        <tr>
-                            <th rowspan="2" style="width:55px">Time</th>
-                            <th colspan="3">Input Voltage</th>
-                            <th colspan="3">Input Current</th>
-                            <th colspan="3">Output Voltage</th>
-                            <th colspan="3">Output Current</th>
-                            <th rowspan="2" style="width:45px">O/P KVA</th>
-                            <th rowspan="2" style="width:45px">O/P KW</th>
-                            <th rowspan="2" style="width:40px">Hz</th>
-                            <th colspan="2">Battery</th>
-                            <th rowspan="2" style="width:70px">Room Temp.  in C (22 to 24)</th>
-                            <th rowspan="2" style="width:100px">Technician Signature</th>
-                        </tr>
-                        <tr>
-                            <th>RY</th><th>YB</th><th>BR</th>
-                            <th>IR</th><th>IY</th><th>IB</th>
-                            <th>RY</th><th>YB</th><th>BR</th>
-                            <th>IR</th><th>IY</th><th>IB</th>
-                            <th>Volt</th><th>A</th>
-                        </tr>
-                    </thead>
-                    <tbody id="data-body"></tbody>
-                </table>
+            <div class="date-cell">
+                <span>Date:</span>
+                <input type="date" id="check-date" onchange="loadDateData()">
             </div>
+        </div>
 
-            <div class="sig-section" id="sig-section">
-                <div class="sig-box">Supervisor Signature: <input type="text" id="sig-supervisor" class="sig-input" placeholder="Enter name"></div>
-                <div class="sig-box">Employee Services Signature: <input type="text" id="sig-employee" class="sig-input" placeholder="Enter name"></div>
-            </div>
+        <div class="table-wrap">
+            <table id="checklist">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:55px">Time</th>
+                        <th colspan="3">Input Voltage</th>
+                        <th colspan="3">Input Current</th>
+                        <th colspan="3">Output Voltage</th>
+                        <th colspan="3">Output Current</th>
+                        <th rowspan="2" style="width:45px">O/P KVA</th>
+                        <th rowspan="2" style="width:45px">O/P KW</th>
+                        <th rowspan="2" style="width:40px">Hz</th>
+                        <th colspan="2">Battery</th>
+                        <th rowspan="2" style="width:70px">Room Temp.  in C (22 to 24)</th>
+                        <th rowspan="2" style="width:100px">Technician Signature</th>
+                    </tr>
+                    <tr>
+                        <th>RY</th><th>YB</th><th>BR</th>
+                        <th>IR</th><th>IY</th><th>IB</th>
+                        <th>RY</th><th>YB</th><th>BR</th>
+                        <th>IR</th><th>IY</th><th>IB</th>
+                        <th>Volt</th><th>A</th>
+                    </tr>
+                </thead>
+                <tbody id="data-body"></tbody>
+            </table>
+        </div>
 
-            <div class="version-bar">
-                <span>Version 1.5</span>
-                <span class="center">Classification - GL Restricted</span>
-                <span class="right">Effective Date: 12-Nov-2021</span>
-            </div>
+        <div class="sig-section" id="sig-section">
+            <div class="sig-box">Supervisor Signature: <input type="text" id="sig-supervisor" class="sig-input" placeholder="Enter name"></div>
+            <div class="sig-box">Employee Services Signature: <input type="text" id="sig-employee" class="sig-input" placeholder="Enter name"></div>
+        </div>
 
-            <div class="footer">
-                <span>GL02-FM-ES (M&amp;E)-007 | GlobalLogic – Hitachi Group</span>
-                <div class="btn-group">
-                    <button class="btn-print" onclick="window.print()">🖨 Print</button>
-                    <button class="btn-csv" onclick="exportToCSV()">📊 Export CSV</button>
-                    <button class="btn-save" onclick="saveData()">💾 Save</button>
-                </div>
+        <div class="version-bar">
+            <span>Version 1.5</span>
+            <span class="center">Classification - GL Restricted</span>
+            <span class="right">Effective Date: 12-Nov-2021</span>
+        </div>
+
+        <div class="footer">
+            <span>GL02-FM-ES (M&amp;E)-007 | GlobalLogic – Hitachi Group</span>
+            <div class="btn-group">
+                <button class="btn-print" onclick="window.print()">🖨 Print</button>
+                <button class="btn-csv" onclick="exportToCSV()">📊 Export CSV</button>
+                <button class="btn-save" onclick="saveData()">💾 Save</button>
             </div>
         </div>
     </div>
